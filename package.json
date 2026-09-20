@@ -1,0 +1,15 @@
+{
+  "name": "batch-image-text-tool",
+  "version": "1.3.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build && npm run share:template",
+    "preview": "vite preview --host 127.0.0.1",
+    "share:template": "node scripts/generate-share-template.mjs"
+  },
+  "devDependencies": {
+    "vite": "^8.3.0"
+  }
+}

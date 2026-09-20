@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="application-name" content="批量图片填字工具">
+  <meta name="application-version" content="1.3.1">
+  <meta name="description" content="在本地批量将文字写入图片指定位置，保持原始图片分辨率。">
+  <link rel="icon" type="image/svg+xml" href="/assets/app-icon.svg">
+  <title>批量图片填字工具 · 本地版</title>
+  <link rel="stylesheet" href="/assets/batch-image-text-tool.css?v=1.3.1">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m6 16 4-4 3 3 2-2 3 3"/><path d="M8 8h8M12 8v4"/></svg></div>
+        <div class="brand-copy"><h1>批量图片填字工具</h1><p>定位文字，一次生成整批图片</p></div>
+      </div>
+      <div class="topbar-actions"><button class="btn btn-secondary preset-open-btn" id="presetOpenBtn" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 4h12l3 3v13H4V4h1Z"/><path d="M8 4v6h8V4M8 20v-7h8v7"/></svg>配置预设 <span id="presetCount">0/10</span></button><div class="top-note"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 4.6 2.8 8.4 7 10 4.2-1.6 7-5.4 7-10V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg>图片仅在本机处理 · 原分辨率导出</div></div>
+    </header>
+
+    <main class="workspace">
+      <div class="sidebar-wrap">
+        <aside class="sidebar" aria-label="制作设置">
+        <section class="section">
+          <h2 class="section-title"><span class="title-label"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 19 10.5 5h3L19 19M7 15h10"/></svg>文字样式</span><span class="step">2</span></h2>
+          <div class="field">
+            <label for="fontSelect">字体</label>
+            <select id="fontSelect">
+              <option value='"SimHei","Microsoft YaHei","PingFang SC","Noto Sans CJK SC",sans-serif'>黑体（默认）</option>
+              <option value='"Microsoft YaHei","PingFang SC",sans-serif'>微软雅黑</option>
+              <option value='"PingFang SC","Hiragino Sans GB",sans-serif'>苹方</option>
+              <option value='SimSun,"Songti SC",serif'>宋体</option>
+              <option value='KaiTi,"Kaiti SC",serif'>楷体</option>
+              <option value='Arial,sans-serif'>Arial</option>
+              <option id="customFontOption" value="" hidden>本机字体</option>
+            </select>
+          </div>
+          <div class="field font-file-field">
+            <label for="fontFile">加载本机字体文件</label>
+            <input id="fontFile" type="file" accept=".ttf,.otf,.woff,.woff2,font/ttf,font/otf,font/woff,font/woff2">
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label for="fontSize">字号（原图像素）</label>
+              <input id="fontSize" type="number" min="6" max="2000" value="54">
+            </div>
+            <div class="field">
+              <label for="textColor">文字颜色</label>
+              <div class="color-control"><input id="textColor" type="color" value="#ecd6ab" aria-label="选择文字颜色"><input id="colorText" type="text" value="#ECD6AB" maxlength="7" placeholder="#ECD6AB" aria-label="文字颜色色号"></div>
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label for="fontWeight">字重</label>
+              <select id="fontWeight"><option value="400">常规</option><option value="500">中等</option><option value="600">半粗</option><option value="700">粗体</option><option value="900">特粗</option></select>
+            </div>
+            <div class="field">
+              <label for="letterSpacing">字间距</label>
+              <input id="letterSpacing" type="number" min="-20" max="300" step="1" value="0">
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label for="textAlign">水平对齐</label>
+              <select id="textAlign"><option value="left" selected>左对齐</option><option value="center">居中</option><option value="right">右对齐</option></select>
+            </div>
+            <div class="field">
+              <label for="verticalAlign">垂直对齐</label>
+              <select id="verticalAlign"><option value="top">顶部</option><option value="middle">居中</option><option value="bottom" selected>底部</option></select>
+            </div>
+          </div>
+          <div class="field"><label class="check"><input id="textLineEnabled" type="checkbox" checked>显示文字下边线</label></div>
+          <div class="text-line-settings" id="textLineSettings">
+            <div class="grid-2">
+              <div class="field">
+                <label for="textLineColor">线条颜色</label>
+                <div class="color-control"><input id="textLineColor" type="color" value="#ecd6ab" aria-label="选择下边线颜色"><input id="textLineColorText" type="text" value="#ECD6AB" maxlength="7" placeholder="#ECD6AB" aria-label="下边线颜色色号"></div>
+              </div>
+              <div class="field"><label for="textLineWidth">线条粗细</label><input id="textLineWidth" type="number" min="1" max="200" step="1" value="4"></div>
+            </div>
+            <div class="field"><label for="textLineGap">文字与线条间距</label><input id="textLineGap" type="number" min="0" max="500" step="1" value="26"></div>
+            <div class="grid-2">
+              <div class="field"><label for="textLineExtendLeft">左侧延伸</label><input id="textLineExtendLeft" type="number" min="0" max="1000" step="1" value="32"></div>
+              <div class="field"><label for="textLineExtendRight">右侧延伸</label><input id="textLineExtendRight" type="number" min="0" max="1000" step="1" value="64"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2 class="section-title"><span class="title-label"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/><rect x="7" y="8" width="10" height="8" rx="1"/></svg>文字区域</span><span class="step">3</span></h2>
+          <p class="hint">拖动四边或四角调整大小；点击后用方向键微调 1 像素，Shift + 方向键移动 10 像素。</p>
+          <div class="grid-4">
+            <div class="field"><label for="regionX">X%</label><input id="regionX" type="number" min="0" max="100" step="0.1"></div>
+            <div class="field"><label for="regionY">Y%</label><input id="regionY" type="number" min="0" max="100" step="0.1"></div>
+            <div class="field"><label for="regionW">宽%</label><input id="regionW" type="number" min="1" max="100" step="0.1"></div>
+            <div class="field"><label for="regionH">高%</label><input id="regionH" type="number" min="1" max="100" step="0.1"></div>
+          </div>
+        </section>
+
+        </aside>
+        <button class="column-resizer sidebar-resizer" id="sidebarResizeHandle" type="button" role="separator" aria-label="调整左侧操作区宽度" aria-orientation="vertical" aria-valuemin="280" aria-valuemax="440" title="拖动调整宽度；双击恢复默认"><span aria-hidden="true"></span></button>
+      </div>
+
+      <div class="content">
+        <div class="editor-row">
+          <section class="main-panel" aria-label="图片预览">
+          <header class="panel-head">
+            <div><div class="panel-title-with-step"><h2>当前预览</h2><span class="step">1</span></div><div class="current-name" id="currentName">等待上传图片和文字</div></div>
+            <div class="head-actions">
+              <div class="zoom-tools" aria-label="画布缩放">
+                <button class="mini-btn" id="zoomOutBtn" title="缩小画布" aria-label="缩小画布">−</button>
+                <button class="mini-btn zoom-level" id="zoomLevelBtn" title="点击适应窗口">—%</button>
+                <button class="mini-btn" id="zoomInBtn" title="放大画布" aria-label="放大画布">＋</button>
+                <button class="mini-btn" id="fitViewBtn" title="让整张图片适应窗口">适应</button>
+                <button class="mini-btn" id="actualSizeBtn" title="一个图片像素对应一个屏幕像素">100%</button>
+                <div class="zoom-mode-switch" role="group" aria-label="滚轮缩放方式"><button id="directZoomBtn" class="is-active" type="button" aria-pressed="true">单滚轮缩放</button><button id="ctrlZoomBtn" type="button" aria-pressed="false">Ctrl + 滚轮缩放</button></div>
+              </div>
+              <div class="nav-actions"><button class="mini-btn" id="prevBtn" title="上一条文字">‹</button><button class="mini-btn" id="nextBtn" title="下一条文字">›</button></div>
+            </div>
+          </header>
+          <div class="preview-shell" id="previewShell" title="拖入图片可上传或替换；滚轮缩放；Shift + 滚轮左右移动；拖动画布空白处可平移">
+            <input class="visually-hidden" id="imageInput" type="file" accept="image/*">
+            <div class="canvas-upload-bar">
+              <button class="canvas-upload-btn" id="canvasUploadBtn" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 16V4m0 0L8 8m4-4 4 4"/><path d="M5 15v5h14v-5"/></svg><b>上传底图</b></button>
+              <span class="canvas-file-meta" id="fileMeta">支持 PNG、JPEG、WebP</span>
+            </div>
+            <div class="canvas-drop-hint" id="canvasDropHint" aria-hidden="true"><strong>松开即可载入图片</strong><span>当前底图将被替换</span></div>
+            <div class="preview-stage" id="previewStage">
+              <button class="empty-preview" id="emptyPreview" type="button"><span class="empty-upload-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 16V4m0 0L8 8m4-4 4 4"/><path d="M5 15v5h14v-5"/></svg></span><strong>点击上传底图</strong><span>或将图片直接拖到画布中<br>图片仅在你的电脑中处理</span></button>
+              <div class="preview-viewport" id="previewViewport">
+                <canvas id="previewCanvas"></canvas>
+                <div class="region-box" id="regionBox" tabindex="0" aria-label="可拖动缩放的文字区域，方向键可微调位置" aria-keyshortcuts="ArrowUp ArrowDown ArrowLeft ArrowRight" title="点击后用方向键微调；按住 Shift 每次移动 10 像素">
+                  <span class="handle" data-handle="nw"></span><span class="handle" data-handle="ne"></span>
+                  <span class="handle" data-handle="n"></span><span class="handle" data-handle="e"></span>
+                  <span class="handle" data-handle="s"></span><span class="handle" data-handle="w"></span>
+                  <span class="handle" data-handle="sw"></span><span class="handle" data-handle="se"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="actionbar">
+            <div class="left"><span class="resolution" id="resolution">输出尺寸：—</span></div>
+            <div class="right"><button class="btn btn-secondary" id="copyBtn"><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V5H5v11h3"/></svg>复制当前图片</button><button class="btn btn-primary" id="downloadBtn"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 4v11m0 0 4-4m-4 4-4-4"/><path d="M5 19h14"/></svg>下载当前图片</button></div>
+          </div>
+          </section>
+
+          <section class="text-entry-panel" aria-label="批量文字输入">
+            <button class="column-resizer text-resizer" id="textResizeHandle" type="button" role="separator" aria-label="调整文字输入区宽度" aria-orientation="vertical" aria-valuemin="220" aria-valuemax="420" title="拖动调整宽度；双击恢复默认"><span aria-hidden="true"></span></button>
+            <div class="text-entry-heading">
+              <div class="section-title"><span class="title-label"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 6h16M4 12h12M4 18h8"/></svg>批量文字</span><span class="step">4</span></div>
+              <p>每行一条内容，系统会分别生成一张图片。</p>
+            </div>
+            <div class="text-entry-control">
+              <textarea id="namesInput" placeholder="每行一条内容，例如：&#10;张三&#10;李四&#10;王五" spellcheck="false"></textarea>
+              <div class="name-meta"><span>空行会自动忽略</span><strong id="nameCount">0 条内容</strong></div>
+            </div>
+            <button class="quick-guide-trigger" id="guideOpenBtn" type="button">
+              <span class="quick-guide-title"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.3 2.3 0 1 1 3.5 2c-.9.5-1.3 1-1.3 2"/><path d="M12 17h.01"/></svg>操作指引</span>
+              <span class="quick-guide-hint">点击查看 <b aria-hidden="true">→</b></span>
+            </button>
+          </section>
+        </div>
+
+        <section class="gallery-panel" aria-label="批量结果预览">
+          <header class="panel-head">
+            <div><div class="panel-title-with-step"><h2>批量结果预览</h2><span class="step">5</span></div><span class="hint">轻量预览，导出时仍使用原图尺寸</span></div>
+            <div class="gallery-head-actions">
+              <div class="pagination"><button class="mini-btn" id="galleryPrev">上一页</button><span id="pageInfo">0 / 0</span><button class="mini-btn" id="galleryNext">下一页</button></div>
+              <button class="btn btn-secondary gallery-export-btn" id="outputSettingsBtn"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>输出设置</button>
+              <button class="btn btn-teal gallery-export-btn" id="exportFolderBtn"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 7h7l2 2h9v10H3V7Z"/><path d="M12 11v5m0 0 2-2m-2 2-2-2"/></svg>批量导出</button>
+              <button class="btn btn-danger gallery-export-btn" id="cancelBtn" type="button" disabled>停止导出</button>
+            </div>
+          </header>
+          <div class="progress-wrap gallery-progress" id="progressWrap">
+            <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+            <div class="progress-text" id="progressText"></div>
+          </div>
+          <div class="gallery-empty" id="galleryEmpty">在画布中上传底图并输入文字后，这里会展示每张图片。</div>
+          <div class="gallery" id="gallery"></div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <dialog class="output-dialog preset-dialog" id="presetDialog" aria-labelledby="presetDialogTitle">
+    <div class="output-dialog-head"><div><span class="dialog-eyebrow">本机保存 · 最多 10 组</span><h2 id="presetDialogTitle">配置预设</h2></div><button class="dialog-close" id="presetDialogClose" type="button" aria-label="关闭配置预设">×</button></div>
+    <div class="output-dialog-body preset-dialog-body">
+      <p class="preset-note">保存当前文字、位置、输出设置和批量内容；有底图或本机字体时也会一并保存。最近保存的预设会在下次打开时自动载入。</p>
+      <section class="preset-current" aria-labelledby="presetCurrentTitle">
+        <div class="preset-current-head"><strong id="presetCurrentTitle">当前将保存的配置</strong><span id="presetSaveMode">新预设</span></div>
+        <div class="preset-current-content">
+          <div class="preset-current-image" id="presetCurrentImage">无底图</div>
+          <dl class="preset-current-facts">
+            <div><dt>底图</dt><dd id="presetCurrentSource">未选择底图</dd></div>
+            <div><dt>批量文字</dt><dd id="presetCurrentNames">0 条</dd></div>
+            <div><dt>文字样式</dt><dd class="preset-style-summary"><span class="preset-color-swatch" id="presetCurrentColorSwatch" aria-hidden="true"></span><span id="presetCurrentStyle">—</span></dd></div>
+            <div><dt>文字区域</dt><dd id="presetCurrentRegion">—</dd></div>
+            <div><dt>下边线</dt><dd id="presetCurrentLine">—</dd></div>
+            <div><dt>输出</dt><dd id="presetCurrentOutput">—</dd></div>
+          </dl>
+        </div>
+      </section>
+      <div class="preset-overwrite-notice" id="presetOverwriteNotice" hidden><span>将用上方当前配置覆盖「<strong id="presetOverwriteName"></strong>」</span><button id="presetOverwriteCancel" type="button">取消覆盖</button></div>
+      <div class="preset-create"><label for="presetName">预设名称</label><div><input id="presetName" type="text" maxlength="40" placeholder="例如：中秋邀请函"><button class="btn btn-primary" id="presetSaveBtn" type="button">保存当前配置</button></div></div>
+      <div class="preset-list-head"><strong>已保存的预设</strong><span id="presetListCount">0 / 10</span></div>
+      <div class="preset-import-row"><input id="presetImportInput" type="file" accept=".json,application/json" hidden><button class="btn btn-secondary" id="presetImportBtn" type="button">导入预设文件</button><span>每个预设可导出为文件，或生成打开即用的共享网页。</span></div>
+      <div class="preset-list" id="presetList"></div>
+      <section class="folder-preset-panel" aria-labelledby="folderPresetTitle">
+        <div class="folder-preset-head"><div><strong id="folderPresetTitle">工作文件夹预设</strong><span id="folderPresetStatus">尚未连接文件夹</span></div><span id="folderPresetCount">0 / 10</span></div>
+        <p>选择工具所在的工作文件夹后，保存的参数、原始底图和字体会放进其中的 <code>presets/</code>。分享整个文件夹，对方选择它一次即可载入。</p>
+        <div class="folder-preset-actions"><button class="btn btn-secondary" id="folderConnectBtn" type="button">连接工作文件夹</button><input id="folderImportInput" type="file" webkitdirectory multiple hidden><button class="btn btn-secondary" id="folderImportBtn" type="button">只读打开文件夹</button><button class="btn btn-secondary" id="folderSyncBtn" type="button" disabled>同步本机预设</button><button class="btn btn-primary" id="folderSaveBtn" type="button" disabled>保存当前配置到文件夹</button></div>
+        <div class="folder-preset-list" id="folderPresetList"></div>
+      </section>
+      <p class="preset-storage-note">本机预设仅保存在当前浏览器中。导出的预设文件或共享网页会包含所选底图、文字和本机字体；请只发给你信任的人。</p>
+    </div>
+  </dialog>
+  <dialog class="output-dialog guide-dialog" id="guideDialog" aria-labelledby="guideDialogTitle">
+    <div class="output-dialog-head">
+      <div><span class="dialog-eyebrow">快速上手</span><h2 id="guideDialogTitle">操作指引</h2></div>
+      <button class="dialog-close" id="guideDialogClose" type="button" aria-label="关闭操作指引">×</button>
+    </div>
+    <div class="guide-dialog-body">
+      <section><span class="guide-icon"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 15V4m0 0L8 8m4-4 4 4"/><path d="M5 14v6h14v-6"/></svg></span><div><h3>上传与替换底图</h3><p>点击画布上传，也可直接拖入图片；再次上传即可替换。</p></div></section>
+      <section><span class="guide-icon"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4M11 8v6M8 11h6"/></svg></span><div><h3>缩放与浏览画布</h3><p>可切换“单滚轮”或 <kbd>Ctrl</kbd> + 滚轮缩放；<kbd>Shift</kbd> + 滚轮左右移动，拖动画布空白处可平移。</p></div></section>
+      <section><span class="guide-icon"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/><rect x="7" y="8" width="10" height="8" rx="1"/></svg></span><div><h3>调整文字框</h3><p>拖动文字框定位，拖动四边或四角缩放；鼠标停在文字框内滚轮可缩放文字。</p></div></section>
+      <section><span class="guide-icon"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3-3 3h2v5H6V9l-3 3 3 3v-2h5v5H9l3 3 3-3h-2v-5h5v2l3-3-3-3v2h-5V6h2l-3-3Z"/></svg></span><div><h3>精确定位与重置</h3><p>方向键移动 1px，<kbd>Shift</kbd> + 方向键移动 10px；双击文字框恢复默认位置与大小。</p></div></section>
+      <section><span class="guide-icon"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 6h14M5 12h14M5 18h9"/><circle cx="3" cy="6" r=".5"/><circle cx="3" cy="12" r=".5"/><circle cx="3" cy="18" r=".5"/></svg></span><div><h3>批量文字</h3><p>每行是一张图片；输入光标所在行会成为当前预览，长文字的编辑框会自动向右生长。</p></div></section>
+      <section><span class="guide-icon"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 7h7l2 2h9v10H3V7Z"/><path d="M12 11v5m0 0 2-2m-2 2-2-2"/></svg></span><div><h3>复制、下载与批量导出</h3><p>单张可直接复制或下载；批量导出前会确认格式与质量。“停止导出”只停止剩余图片，不删除已保存文件。</p></div></section>
+    </div>
+    <div class="output-dialog-actions"><button class="btn btn-primary" id="guideDialogDone" type="button">知道了</button></div>
+  </dialog>
+  <dialog class="output-dialog" id="outputDialog" aria-labelledby="outputDialogTitle">
+    <div class="output-dialog-head">
+      <div><span class="dialog-eyebrow">本次导出</span><h2 id="outputDialogTitle">输出设置</h2></div>
+      <button class="dialog-close" id="outputDialogClose" type="button" aria-label="关闭输出设置">×</button>
+    </div>
+    <div class="output-dialog-body">
+      <div class="grid-2 output-grid">
+        <div class="field">
+          <label for="outputType">图片格式</label>
+          <select id="outputType"><option value="image/png">PNG</option><option value="image/jpeg">JPEG</option><option value="image/webp">WebP</option></select>
+        </div>
+        <div class="field" id="qualityField">
+          <label class="range-label" for="quality">图片质量 <span class="range-value" id="qualityValue">100%</span></label>
+          <div class="inline quality-slider" style="--quality-position:97.5%;--quality-offset:.95px;--quality-indicator-height:25.2px;--quality-indicator-top:8.9px"><span class="quality-segments" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="quality-indicator" aria-hidden="true"></span><input id="quality" type="range" min="5" max="100" step="5" value="100" aria-label="图片质量百分比，按百分之五分段调整"></div>
+        </div>
+      </div>
+      <div class="field"><label for="filePrefix">文件名前缀</label><input id="filePrefix" type="text" placeholder="可选，例如：证书_"></div>
+      <div class="field"><label class="check"><input id="includeIndex" type="checkbox" checked>文件名包含三位序号</label></div>
+      <p class="hint" id="folderHint">Chrome / Edge 可直接写入所选文件夹；其他浏览器会逐张下载。</p>
+    </div>
+    <div class="output-dialog-actions">
+      <button class="btn btn-secondary" id="outputDialogCancel" type="button">取消</button>
+      <button class="btn btn-primary" id="outputDialogConfirm" type="button">开始批量导出</button>
+    </div>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="/assets/batch-image-text-tool.js?v=1.3.1"></script>
+</body>
+</html>
