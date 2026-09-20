@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "batch-image-text-tool",
+  "name": "stamp",
   "compatibility_date": "2026-09-20",
 "assets": {
   "directory": "./dist",
