@@ -10,7 +10,7 @@
     "previewShell","previewStage","emptyPreview","previewViewport","previewCanvas","regionBox",
     "resolution","copyBtn","downloadBtn","gallery","galleryEmpty","galleryPrev","galleryNext","pageInfo","toast",
     "sidebarResizeHandle","textResizeHandle","guideOpenBtn","guideDialog","guideDialogClose","guideDialogDone","outputDialog","outputDialogTitle","outputDialogClose","outputDialogCancel","outputDialogConfirm",
-    "presetOpenBtn","presetCount","presetDialog","presetDialogClose","presetName","presetSaveBtn","presetList","presetListCount","presetImportBtn","presetImportInput",
+    "presetSaveOpenBtn","presetOpenBtn","presetCount","presetDialog","presetDialogClose","presetName","presetSaveBtn","presetList","presetListCount","presetImportBtn","presetImportInput",
     "folderConnectBtn","folderImportBtn","folderImportInput","folderSyncBtn","folderSaveBtn","folderPresetStatus","folderPresetCount","folderPresetList",
     "presetCurrentImage","presetCurrentSource","presetCurrentNames","presetCurrentStyle","presetCurrentColorSwatch","presetCurrentRegion","presetCurrentLine","presetCurrentOutput","presetSaveMode","presetOverwriteNotice","presetOverwriteName","presetOverwriteCancel"
   ].map(id => [id, $(id)]));
@@ -758,6 +758,27 @@
     if (clearName) refs.presetName.value = "";
   }
 
+  function setPresetDialogMode(mode) {
+    refs.presetDialog.classList.toggle("is-save-mode", mode === "save");
+    refs.presetDialog.classList.toggle("is-list-mode", mode === "list");
+    $("presetDialogTitle").textContent = mode === "save" ? "保存当前配置" : "配置预设";
+  }
+
+  async function openPresetSaveDialog() {
+    resetPresetSaveMode();
+    setPresetDialogMode("save");
+    renderPresetSaveSummary();
+    refs.presetDialog.showModal();
+    try {
+      await refreshPresetList();
+      refs.presetName.focus();
+    } catch (error) {
+      console.error(error);
+      refs.presetDialog.close();
+      notify("当前浏览器无法使用本地预设存储。", true);
+    }
+  }
+
   function preparePresetOverwrite(preset) {
     if (presetBusy || state.running) return;
     presetOverwriteTarget = preset;
@@ -768,6 +789,7 @@
     refs.presetSaveBtn.textContent = "确认覆盖并保存";
     refs.presetSaveBtn.disabled = false;
     renderPresetSaveSummary();
+    setPresetDialogMode("save");
     refs.presetName.focus();
     refs.presetName.select();
   }
@@ -978,6 +1000,7 @@
       notify(folderSyncError
         ? `本机已保存“${name}”，但工作文件夹写入失败：${folderSyncError.message}`
         : `已保存“${name}”${state.folderSource?.kind === "handle" ? "并同步到工作文件夹" : ""}，下次打开将自动载入。`, Boolean(folderSyncError));
+      if (refs.presetDialog.open) refs.presetDialog.close();
     } catch (error) {
       console.error(error);
       notify("保存失败：浏览器存储空间不足或禁止本地存储。", true);
@@ -1697,15 +1720,15 @@
   refs.copyBtn.addEventListener("click", () => copyImage());
   refs.downloadBtn.addEventListener("click", () => downloadImage());
   refs.outputSettingsBtn.addEventListener("click", () => openOutputDialog("settings"));
+  refs.presetSaveOpenBtn.addEventListener("click", () => openPresetSaveDialog());
   refs.presetOpenBtn.addEventListener("click", async () => {
     resetPresetSaveMode();
-    renderPresetSaveSummary();
+    setPresetDialogMode("list");
     refs.presetList.textContent = "正在读取预设…";
     refs.presetDialog.showModal();
     try {
       await refreshPresetList();
       await renderFolderPresetList();
-      refs.presetName.focus();
     } catch (error) { console.error(error); refs.presetDialog.close(); notify("当前浏览器无法使用本地预设存储。", true); }
   });
   refs.presetDialogClose.addEventListener("click", () => refs.presetDialog.close());

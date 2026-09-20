@@ -835,6 +835,14 @@ body.column-resizing, body.column-resizing * { cursor: col-resize !important; us
 .preset-dialog { width: min(94vw, 680px); max-height: min(88vh, 760px); }
 .preset-dialog[open] { height: min(88vh, 760px); }
 .preset-dialog-body { gap: 14px; }
+.preset-dialog.is-list-mode .preset-current,
+.preset-dialog.is-list-mode .preset-overwrite-notice,
+.preset-dialog.is-list-mode .preset-create { display: none; }
+.preset-dialog.is-save-mode .preset-list-head,
+.preset-dialog.is-save-mode .preset-import-row,
+.preset-dialog.is-save-mode .preset-list,
+.preset-dialog.is-save-mode .folder-preset-panel,
+.preset-dialog.is-save-mode .preset-storage-note { display: none; }
 .preset-note, .preset-storage-note { margin: 0; color: #596269; font-size: .78rem; line-height: 1.55; }
 .preset-storage-note { color: #798187; font-size: .72rem; }
 .preset-current { overflow: hidden; background: #f7fafb; border: 1px solid #d7e2e4; border-radius: 11px; }
