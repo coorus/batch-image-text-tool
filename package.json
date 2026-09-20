@@ -4,12 +4,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --host 127.0.0.1",
+    "dev": "vite --host 127.0.0.1 --open",
     "build": "vite build && npm run share:template",
     "preview": "vite preview --host 127.0.0.1",
     "share:template": "node scripts/generate-share-template.mjs"
   },
   "devDependencies": {
-    "vite": "^8.3.0"
+    "@cloudflare/vite-plugin": "^1.55.0",
+    "vite": "^8.3.0",
+    "wrangler": "^4.134.0"
   }
 }
