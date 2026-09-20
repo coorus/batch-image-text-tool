@@ -1012,3 +1012,47 @@ body.column-resizing, body.column-resizing * { cursor: col-resize !important; us
   .gallery { grid-template-columns: 1fr; padding: 12px; }
   .gallery-empty { margin: 12px; }
 }
+
+
+/* 保存当前配置弹窗：紧凑、独立的确认布局 */
+.preset-dialog.is-save-mode { width: min(94vw, 620px); }
+.preset-dialog.is-save-mode[open] { height: auto; max-height: min(88vh, 650px); }
+.preset-dialog.is-save-mode .preset-dialog-body {
+  padding: 18px 20px 20px;
+  flex: 0 1 auto;
+  gap: 16px;
+}
+.preset-dialog.is-save-mode .preset-note {
+  padding: 10px 12px;
+  color: #526168;
+  background: #f4f7f7;
+  border: 1px solid #dfe7e8;
+  border-radius: 9px;
+  line-height: 1.5;
+}
+.preset-dialog.is-save-mode .preset-current { border-color: #cfdcde; border-radius: 12px; }
+.preset-dialog.is-save-mode .preset-current-head { min-height: 40px; padding: 9px 13px; }
+.preset-dialog.is-save-mode .preset-current-content { padding: 13px; gap: 16px; }
+.preset-dialog.is-save-mode .preset-current-image { width: 104px; min-height: 104px; border-radius: 9px; }
+.preset-dialog.is-save-mode .preset-current-facts { gap: 10px 16px; }
+.preset-dialog.is-save-mode .preset-create {
+  padding: 13px;
+  gap: 8px;
+  background: #f7f9f9;
+  border: 1px solid #dbe4e5;
+  border-radius: 12px;
+}
+.preset-dialog.is-save-mode .preset-create > div { align-items: stretch; gap: 10px; }
+.preset-dialog.is-save-mode .preset-create input { height: 46px; padding: 0 13px; }
+.preset-dialog.is-save-mode .preset-create .btn {
+  min-width: 150px;
+  min-height: 46px;
+  padding: 10px 17px;
+  border-radius: 9px;
+}
+@media (max-width: 640px) {
+  .preset-dialog.is-save-mode .preset-dialog-body { padding: 14px; }
+  .preset-dialog.is-save-mode .preset-current-image { width: 76px; min-height: 92px; }
+  .preset-dialog.is-save-mode .preset-create { padding: 11px; }
+  .preset-dialog.is-save-mode .preset-create .btn { width: 100%; }
+}
